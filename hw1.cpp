@@ -7,7 +7,6 @@ void checkOpt(std::set<char>& s){
     //checking for conflicting flags
     if((s.find('q') != s.end()) && (s.find('s') != s.end() || s.find('c') != s.end())){
         std::cerr << "CONFLICTING FLAGS" << std::endl;
-        delete &s;
         std::exit(1);
     }
     //checking if all flags are valid
@@ -16,12 +15,9 @@ void checkOpt(std::set<char>& s){
     for(std::set<char>::iterator it=s.begin(); it!= s.end(); ++it) {
         if(valid.find(*it) == valid.end()){
             std::cerr << '-' << *it << " INVALID FLAG" << std::endl;
-            delete &s;
-            delete &valid;
             std::exit(1);
         }
     }
-    delete &valid;
 }
 
 int main(int argc, char* argv[]){
@@ -34,7 +30,6 @@ int main(int argc, char* argv[]){
                 optSet->insert(argv[i][1]); //put it in the set of opts
             } else {
                 std::cerr << argv[i] << " INVALID FLAG" << std::endl; //print bad flag
-                delete optSet;
                 std::exit(1); //exit program
             }
         } else { //if it's not an opt, it's a filename
@@ -43,12 +38,12 @@ int main(int argc, char* argv[]){
     }
     if(!(optSet->empty())) //check if there were any opts
         checkOpt(*optSet);//check if opts are valid and no conflicts
-    std::ifstream infile(fileName); //make stream of file
-    if(!infile.good()){ //check if file exists
-        std::cerr << fileName << " CANNOT OPEN" << std::endl;
-        delete optSet;
-        std::exit(1);
+    if(fileName){
+        std::ifstream infile(fileName); //make stream of file
+        if(!infile.good()){ //check if file exists
+            std::cerr << fileName << " CANNOT OPEN" << std::endl;
+            std::exit(1);
+        }
     }
-    delete optSet;
     std::exit(0);
 }
