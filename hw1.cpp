@@ -45,6 +45,5 @@ int main(int argc, char* argv[]){
             std::exit(1);
         }
     }
-    delete optSet;
     std::exit(0);
 }
