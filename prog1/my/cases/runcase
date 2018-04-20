@@ -1,0 +1,133 @@
+ex=~/prog1
+
+cd $LIB/public/p1
+
+[ ! -e $ex ] && echo Cannot find the program, please build it! && exit 1
+
+printonly=no
+[ "$1" = "-v" ] && printonly=yes && shift
+
+ofile=`mktemp`
+
+case "$1" in
+	inv1)
+		args="-x"
+		;;
+
+	inv2)
+		args="-quiet"
+		;;
+
+	conf1)
+		args="-s -q"
+		;;
+
+	conf2)
+		args="-q -c"
+		;;
+
+	badf1)
+		args="badfile"
+		;;
+
+	badf2)
+		args="-q badfile"
+		;;
+
+	badf3)
+		args="-x badfile"
+		;;
+
+	toomany)
+		args="first.txt first.txt"
+		;;
+
+	blank)
+		args="-q first.txt"
+		;;
+
+	cp1)
+		args="first.txt"
+		;;
+
+	cp2)
+		args="-s first.txt"
+		;;
+
+	sq)
+		args="-s second.txt"
+		;;
+
+	cp3)
+		args="-c first.txt"
+		;;
+
+	rw)
+		args="-c third.txt"
+		;;
+
+	rsq)
+		args="-s -c third.txt"
+		;;
+
+	so)
+		args="-q -p first.txt"
+		;;
+
+	slo)
+		args="-q -p -l first.txt"
+		;;
+
+	socin)
+		args="-q < first.txt"
+		;;
+
+	slocin)
+		args="-q -p -l < first.txt"
+		;;
+
+	ss)
+		args="-s -p second.txt"
+		;;
+
+	sps)
+		args="-l -s -p second.txt"
+		;;
+
+	big1)
+		args="-c -l -s -s -s third.txt"
+		;;
+
+	big2)
+		args="-c -l -s -p -c -s < ham.txt"
+		;;
+
+	*)
+		echo "cases are inv1, inv2, conf1, conf2, badf1, badf2, badf3"
+		echo "    toomany, blank, cp1, cp2, sq, cp3, rw, rsq"
+		echo "    so, slo, socin, slocin, ss, sps, big1, big2"
+		exit 1
+		;;
+esac
+
+[ $printonly = "yes" ] && echo prog0 $args && exit
+
+echo RUNNING prog0 $args
+
+score=0
+
+eval $ex $args 2>&1 | tee $ofile
+
+diff $ofile ${1}.correct
+
+rc=$?
+
+[ $rc -eq 0 ] && score=1
+
+echo RESULT: $1 "[ " $score " / 1 ]"
+
+rm $ofile
+
+exit $rc
+
+
